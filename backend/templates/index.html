@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Matrix Manipulation</title>
+
+    <style>
+
+        /* =========================
+           GLOBAL
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(circle at top left, #243b55, transparent 40%),
+                radial-gradient(circle at bottom right, #141e30, transparent 40%),
+                linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+
+            color: white;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================
+           BACKGROUND ANIMATION
+        ========================= */
+
+        body::before {
+            content: "";
+            position: fixed;
+
+            width: 400px;
+            height: 400px;
+
+            background: rgba(0, 255, 255, 0.08);
+
+            border-radius: 50%;
+
+            top: -150px;
+            left: -150px;
+
+            filter: blur(5px);
+
+            animation: floatCircle 8s ease-in-out infinite;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+
+            width: 350px;
+            height: 350px;
+
+            background: rgba(120, 0, 255, 0.08);
+
+            border-radius: 50%;
+
+            bottom: -150px;
+            right: -100px;
+
+            animation: floatCircle2 10s ease-in-out infinite;
+        }
+
+
+        @keyframes floatCircle {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(100px, 80px);
+            }
+        }
+
+
+        @keyframes floatCircle2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-80px, -100px);
+            }
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+
+            margin: auto;
+
+            padding: 50px 20px;
+
+            position: relative;
+
+            z-index: 2;
+
+            animation: pageLoad 1s ease;
+        }
+
+
+        @keyframes pageLoad {
+
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            text-align: center;
+
+            margin-bottom: 45px;
+        }
+
+
+        header h1 {
+            font-size: 42px;
+
+            margin-bottom: 10px;
+
+            letter-spacing: 1px;
+
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.3);
+
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+
+        @keyframes titleGlow {
+
+            0%,
+            100% {
+                text-shadow:
+                    0 0 10px rgba(255, 255, 255, 0.2);
+            }
+
+            50% {
+                text-shadow:
+                    0 0 25px rgba(0, 255, 255, 0.5);
+            }
+        }
+
+
+        header p {
+            color: #cfd8dc;
+
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           MATRIX AREA
+        ========================= */
+
+        .matrices {
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 40px;
+
+            margin-bottom: 40px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* =========================
+           MATRIX CARD
+        ========================= */
+
+        .matrix-card {
+            width: 330px;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            background: rgba(255, 255, 255, 0.10);
+
+            border: 1px solid rgba(255, 255, 255, 0.20);
+
+            backdrop-filter: blur(15px);
+
+            -webkit-backdrop-filter: blur(15px);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.25);
+
+            transition: 0.35s ease;
+
+            animation: cardAppear 0.8s ease;
+        }
+
+
+        @keyframes cardAppear {
+
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+
+        .matrix-card:hover {
+
+            transform: translateY(-8px);
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .matrix-card h2 {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+
+            font-size: 25px;
+        }
+
+
+        /* =========================
+           MATRIX INPUT GRID
+        ========================= */
+
+        .matrix-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 12px;
+
+            justify-items: center;
+        }
+
+
+        input {
+
+            width: 90px;
+
+            height: 55px;
+
+            border-radius: 10px;
+
+            border: 2px solid rgba(255, 255, 255, 0.2);
+
+            background: rgba(0, 0, 0, 0.25);
+
+            color: white;
+
+            text-align: center;
+
+            font-size: 19px;
+
+            outline: none;
+
+            transition: 0.25s ease;
+        }
+
+
+        input::placeholder {
+            color: #b0bec5;
+        }
+
+
+        input:focus {
+
+            border-color: #00e5ff;
+
+            box-shadow:
+                0 0 15px rgba(0, 229, 255, 0.4);
+
+            transform: scale(1.05);
+        }
+
+
+        /* Remove number input arrows */
+
+        input::-webkit-inner-spin-button,
+        input::-webkit-outer-spin-button {
+
+            -webkit-appearance: none;
+
+            margin: 0;
+        }
+
+
+        /* =========================
+           OPERATOR
+        ========================= */
+
+        .operator {
+
+            font-size: 35px;
+
+            font-weight: bold;
+
+            color: #00e5ff;
+
+            animation: pulse 2s infinite;
+        }
+
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+
+        /* =========================
+           OPERATIONS
+        ========================= */
+
+        .operations {
+
+            text-align: center;
+
+            margin-bottom: 40px;
+        }
+
+
+        .operations h2 {
+
+            margin-bottom: 20px;
+
+            font-size: 25px;
+        }
+
+
+        .button-container {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+
+        button {
+
+            padding: 13px 22px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            background: rgba(255, 255, 255, 0.12);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            backdrop-filter: blur(10px);
+
+            transition: 0.25s ease;
+        }
+
+
+        button:hover {
+
+            transform: translateY(-4px);
+
+            background: rgba(0, 229, 255, 0.25);
+
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+
+        button:active {
+
+            transform: scale(0.95);
+        }
+
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        #result {
+
+            max-width: 600px;
+
+            min-height: 150px;
+
+            margin: auto;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.10);
+
+            border: 1px solid rgba(255, 255, 255, 0.20);
+
+            backdrop-filter: blur(15px);
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.25);
+
+            animation: resultAppear 0.6s ease;
+        }
+
+
+        @keyframes resultAppear {
+
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        #result h2 {
+
+            margin-bottom: 20px;
+
+            color: #00e5ff;
+        }
+
+
+        .result-matrix {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 80px);
+
+            gap: 12px;
+
+            justify-content: center;
+
+            margin-top: 20px;
+        }
+
+
+        .result-value {
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.25);
+
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+
+        .det-result {
+
+            font-size: 18px;
+
+            line-height: 2;
+
+            color: #e0f7fa;
+        }
+
+
+        .error {
+
+            color: #ff8a80;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loader {
+
+            width: 35px;
+
+            height: 35px;
+
+            margin: 20px auto;
+
+            border: 4px solid rgba(255, 255, 255, 0.2);
+
+            border-top: 4px solid #00e5ff;
+
+            border-radius: 50%;
+
+            animation: spin 0.8s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            text-align: center;
+
+            margin-top: 45px;
+
+            color: #b0bec5;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 750px) {
+
+            header h1 {
+                font-size: 32px;
+            }
+
+            .matrices {
+                flex-direction: column;
+            }
+
+            .operator {
+                transform: rotate(90deg);
+            }
+
+            .matrix-card {
+                width: 100%;
+
+                max-width: 330px;
+            }
+
+            button {
+                width: 90%;
+                max-width: 250px;
+            }
+        }
+
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!-- HEADER -->
+
+        <header>
+
+            <h1>Matrix Manipulation</h1>
+
+            <p>
+                Perform mathematical operations on 2 × 2 matrices
+            </p>
+
+        </header>
+
+
+        <!-- MATRICES -->
+
+        <div class="matrices">
+
+
+            <!-- MATRIX A -->
+
+            <div class="matrix-card">
+
+                <h2>Matrix A</h2>
+
+                <div class="matrix-grid">
+
+                    <input
+                        type="number"
+                        id="a11"
+                        placeholder="a₁₁"
+                    >
+
+                    <input
+                        type="number"
+                        id="a12"
+                        placeholder="a₁₂"
+                    >
+
+                    <input
+                        type="number"
+                        id="a21"
+                        placeholder="a₂₁"
+                    >
+
+                    <input
+                        type="number"
+                        id="a22"
+                        placeholder="a₂₂"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- OPERATOR -->
+
+            <div class="operator">
+                +
+            </div>
+
+
+            <!-- MATRIX B -->
+
+            <div class="matrix-card">
+
+                <h2>Matrix B</h2>
+
+                <div class="matrix-grid">
+
+                    <input
+                        type="number"
+                        id="b11"
+                        placeholder="b₁₁"
+                    >
+
+                    <input
+                        type="number"
+                        id="b12"
+                        placeholder="b₁₂"
+                    >
+
+                    <input
+                        type="number"
+                        id="b21"
+                        placeholder="b₂₁"
+                    >
+
+                    <input
+                        type="number"
+                        id="b22"
+                        placeholder="b₂₂"
+                    >
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- OPERATIONS -->
+
+        <section class="operations">
+
+            <h2>Operations</h2>
+
+            <div class="button-container">
+
+                <button onclick="calculate('addition')">
+                    ➕ Addition
+                </button>
+
+                <button onclick="calculate('subtraction')">
+                    ➖ Subtraction
+                </button>
+
+                <button onclick="calculate('multiplication')">
+                    ✖ Multiplication
+                </button>
+
+                <button onclick="calculate('determinant')">
+                    ∆ Determinant
+                </button>
+
+                <button onclick="calculate('inverse')">
+                    🔄 Inverse
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULT -->
+
+        <div id="result">
+
+            <h2>Result</h2>
+
+            <p>
+                Enter matrix values and select an operation.
+            </p>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            Matrix Manipulation Tool • Python Flask + NumPy
+
+        </footer>
+
+
+    </div>
+
+
+    <script>
+
+
+        /* =========================
+           GET MATRIX A
+        ========================= */
+
+        function getMatrixA() {
+
+            return [
+
+                [
+                    Number(document.getElementById("a11").value),
+                    Number(document.getElementById("a12").value)
+                ],
+
+                [
+                    Number(document.getElementById("a21").value),
+                    Number(document.getElementById("a22").value)
+                ]
+
+            ];
+
+        }
+
+
+        /* =========================
+           GET MATRIX B
+        ========================= */
+
+        function getMatrixB() {
+
+            return [
+
+                [
+                    Number(document.getElementById("b11").value),
+                    Number(document.getElementById("b12").value)
+                ],
+
+                [
+                    Number(document.getElementById("b21").value),
+                    Number(document.getElementById("b22").value)
+                ]
+
+            ];
+
+        }
+
+
+        /* =========================
+           CHECK INPUTS
+        ========================= */
+
+        function validateInputs() {
+
+            const inputs = document.querySelectorAll(
+                "input[type='number']"
+            );
+
+            for (let input of inputs) {
+
+                if (input.value === "") {
+
+                    return false;
+
+                }
+
+            }
+
+            return true;
+
+        }
+
+
+        /* =========================
+           CALCULATE
+        ========================= */
+
+        async function calculate(operation) {
+
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            /* Validate input */
+
+            if (!validateInputs()) {
+
+                resultBox.innerHTML = `
+
+                    <h2>⚠ Input Required</h2>
+
+                    <p class="error">
+                        Please enter values in all matrix fields.
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            /* Show loading */
+
+            resultBox.innerHTML = `
+
+                <h2>Calculating...</h2>
+
+                <div class="loader"></div>
+
+            `;
+
+
+            const A = getMatrixA();
+
+            const B = getMatrixB();
+
+
+            try {
+
+
+                /*
+                    IMPORTANT:
+
+                    We use /calculate instead of
+                    http://127.0.0.1:5000/calculate
+
+                    because Flask is serving this page.
+                */
+
+                const response = await fetch(
+                    "/calculate",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            matrixA: A,
+
+                            matrixB: B,
+
+                            operation: operation
+
+                        })
+
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                /* Backend error */
+
+                if (!response.ok || data.error) {
+
+                    displayError(
+                        data.error ||
+                        "Something went wrong."
+                    );
+
+                    return;
+
+                }
+
+
+                /* Display result */
+
+                displayResult(
+                    data.result,
+                    operation
+                );
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                displayError(
+                    "Cannot connect to Python backend."
+                );
+
+            }
+
+        }
+
+
+        /* =========================
+           DISPLAY RESULT
+        ========================= */
+
+        function displayResult(result, operation) {
+
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            /*
+                Matrix result
+            */
+
+            if (Array.isArray(result)) {
+
+
+                let html = `
+
+                    <h2>Result</h2>
+
+                    <div class="result-matrix">
+
+                `;
+
+
+                for (let row of result) {
+
+                    for (let value of row) {
+
+                        html += `
+
+                            <div class="result-value">
+
+                                ${formatNumber(value)}
+
+                            </div>
+
+                        `;
+
+                    }
+
+                }
+
+
+                html += `
+
+                    </div>
+
+                `;
+
+
+                resultBox.innerHTML = html;
+
+
+            }
+
+
+            /*
+                Determinant result
+            */
+
+            else {
+
+                resultBox.innerHTML = `
+
+                    <h2>Result</h2>
+
+                    <div class="det-result">
+
+                        ${result}
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================
+           DISPLAY ERROR
+        ========================= */
+
+        function displayError(message) {
+
+
+            const resultBox =
+                document.getElementById("result");
+
+
+            resultBox.innerHTML = `
+
+                <h2>⚠ Error</h2>
+
+                <p class="error">
+
+                    ${message}
+
+                </p>
+
+            `;
+
+        }
+
+
+        /* =========================
+           FORMAT NUMBERS
+        ========================= */
+
+        function formatNumber(number) {
+
+
+            /*
+                Remove unnecessary decimal
+                values from NumPy results.
+
+                Example:
+
+                5.000000 → 5
+
+                2.500000 → 2.5
+            */
+
+            if (
+                typeof number === "number" &&
+                Number.isFinite(number)
+            ) {
+
+                return Number(
+                    number.toFixed(6)
+                );
+
+            }
+
+
+            return number;
+
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>
